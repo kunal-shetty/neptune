@@ -23,7 +23,7 @@ A modern, production-ready AI chatbot built with Next.js featuring Google OAuth 
 
 Create a `.env.local` file in the root directory:
 
-```env
+\`\`\`env
 # Google OAuth (for NextAuth.js)
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
@@ -39,15 +39,15 @@ GEMINI_API_KEY=your_gemini_api_key
 
 # Database (Optional - for chat history)
 DATABASE_URL=your_database_url
-```
+\`\`\`
 
 ### 2. Install Dependencies
 
-```bash
+\`\`\`bash
 npm install
 # or
 pnpm install
-```
+\`\`\`
 
 ### 3. Set Up Google OAuth
 
@@ -63,7 +63,7 @@ pnpm install
 Update `/app/api/chat/route.ts` to use your preferred AI provider:
 
 **For OpenAI:**
-```typescript
+\`\`\`typescript
 import OpenAI from 'openai'
 
 const openai = new OpenAI({
@@ -79,14 +79,14 @@ const completion = await openai.chat.completions.create({
 })
 
 const response = completion.choices[0].message.content
-```
+\`\`\`
 
 ### 5. Set Up Authentication
 
 Install NextAuth.js:
-```bash
+\`\`\`bash
 npm install next-auth
-```
+\`\`\`
 
 Create `/app/api/auth/[...nextauth]/route.ts` with Google provider configuration.
 
@@ -100,9 +100,9 @@ For chat history persistence, integrate one of:
 
 ### 7. Run the Application
 
-```bash
+\`\`\`bash
 npm run dev
-```
+\`\`\`
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
@@ -118,7 +118,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## Project Structure
 
-```
+\`\`\`
 ├── app/
 │   ├── api/
 │   │   └── chat/
@@ -140,7 +140,7 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 │   ├── navbar.tsx                 # Navigation bar
 │   └── theme-provider.tsx         # Theme context
 └── README.md
-```
+\`\`\`
 
 ## Deployment
 
