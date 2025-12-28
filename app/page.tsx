@@ -14,7 +14,6 @@ export default function Home() {
     <div className="min-h-screen relative overflow-hidden">
       {/* Background Effects */}
       <GridScan />
-      <LightRays />
       <PixelTransition />
       <SplashCursor />
 
