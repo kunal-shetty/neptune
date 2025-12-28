@@ -5,37 +5,21 @@ import { Resend } from "resend"
 const resend = new Resend(process.env.RESEND_API_KEY!)
 
 const PLAN_FEATURES: Record<string, string[]> = {
-  basic: [
-    "20 exports per day",
-    "Basic components",
-    "Email support",
-    "Community access",
-  ],
+  basic: ["1,000 messages per month", "All AI modes (Developer, ELI5, Roast)", "Voice input support", "Email support"],
   pro: [
-    "Unlimited exports",
-    "All components",
+    "Unlimited messages",
+    "Priority AI responses",
+    "Advanced voice features",
+    "Chat history export",
     "Priority support",
-    "Custom branding",
-    "Team collaboration",
   ],
-  lifetime: [
-    "Unlimited access forever",
-    "All future updates",
-    "Premium support",
-    "Source code access",
-    "Commercial license",
-  ],
+  lifetime: ["Unlimited access forever", "All future AI models", "Premium support", "API access", "Commercial license"],
 }
 
-export async function sendSuccessEmail(
-  email: string,
-  name: string,
-  plan: string
-) {
+export async function sendSuccessEmail(email: string, name: string, plan: string) {
   if (!email) return
 
-  const formattedPlan =
-    plan.charAt(0).toUpperCase() + plan.slice(1)
+  const formattedPlan = plan.charAt(0).toUpperCase() + plan.slice(1)
 
   const features = PLAN_FEATURES[plan] || []
 
@@ -48,9 +32,9 @@ export async function sendSuccessEmail(
     : ""
 
   await resend.emails.send({
-    from: "BuildIT <onboarding@resend.dev>",
+    from: "NeuralChat <onboarding@resend.dev>",
     to: [email],
-    subject: "Thank You for Choosing BuildIT 🎉",
+    subject: "Welcome to NeuralChat Premium 🎉",
     html: `
       <h2>Payment Successful 🎉</h2>
 
@@ -58,8 +42,8 @@ export async function sendSuccessEmail(
 
       <p>
         Thank you for purchasing the <strong>${formattedPlan} Plan</strong> on
-        <strong>BuildIT Website Builder</strong>.
-        Your payment has been successfully processed, and your access is now active.
+        <strong>NeuralChat AI Assistant</strong>.
+        Your payment has been successfully processed, and your premium access is now active.
       </p>
 
       ${
@@ -72,7 +56,7 @@ export async function sendSuccessEmail(
       }
 
       <p>
-        You can now continue building, editing, and exporting your website projects.
+        You can now enjoy unlimited conversations with our advanced AI assistant.
       </p>
 
       <p>
@@ -83,9 +67,9 @@ export async function sendSuccessEmail(
       <br />
 
       <p>
-        Thanks again for trusting BuildIT.
+        Thanks again for trusting NeuralChat.
         <br />
-        — The BuildIT Team
+        — The NeuralChat Team
       </p>
     `,
   })

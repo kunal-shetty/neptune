@@ -1,97 +1,98 @@
-'use client'
+"use client"
 
-import React, { useRef, useEffect, useState } from 'react';
-import * as THREE from 'three';
+import type React from "react"
+import { useRef, useEffect, useState } from "react"
+import * as THREE from "three"
 
 interface LightPillarProps {
-  topColor?: string;
-  bottomColor?: string;
-  intensity?: number;
-  rotationSpeed?: number;
-  interactive?: boolean;
-  className?: string;
-  glowAmount?: number;
-  pillarWidth?: number;
-  pillarHeight?: number;
-  noiseIntensity?: number;
-  mixBlendMode?: React.CSSProperties['mixBlendMode'];
-  pillarRotation?: number;
+  topColor?: string
+  bottomColor?: string
+  intensity?: number
+  rotationSpeed?: number
+  interactive?: boolean
+  className?: string
+  glowAmount?: number
+  pillarWidth?: number
+  pillarHeight?: number
+  noiseIntensity?: number
+  mixBlendMode?: React.CSSProperties["mixBlendMode"]
+  pillarRotation?: number
 }
 
 const LightPillar: React.FC<LightPillarProps> = ({
-  topColor = '#5227FF',
-  bottomColor = '#FF9FFC',
+  topColor = "#5227FF",
+  bottomColor = "#FF9FFC",
   intensity = 1.0,
   rotationSpeed = 0.3,
   interactive = false,
-  className = '',
+  className = "",
   glowAmount = 0.005,
   pillarWidth = 3.0,
   pillarHeight = 0.4,
   noiseIntensity = 0.5,
-  mixBlendMode = 'screen',
-  pillarRotation = 0
+  mixBlendMode = "screen",
+  pillarRotation = 0,
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const rafRef = useRef<number | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const materialRef = useRef<THREE.ShaderMaterial | null>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const cameraRef = useRef<THREE.OrthographicCamera | null>(null);
-  const geometryRef = useRef<THREE.PlaneGeometry | null>(null);
-  const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2(0, 0));
-  const timeRef = useRef<number>(0);
-  const [webGLSupported, setWebGLSupported] = useState<boolean>(true);
+  const containerRef = useRef<HTMLDivElement>(null)
+  const rafRef = useRef<number | null>(null)
+  const rendererRef = useRef<THREE.WebGLRenderer | null>(null)
+  const materialRef = useRef<THREE.ShaderMaterial | null>(null)
+  const sceneRef = useRef<THREE.Scene | null>(null)
+  const cameraRef = useRef<THREE.OrthographicCamera | null>(null)
+  const geometryRef = useRef<THREE.PlaneGeometry | null>(null)
+  const mouseRef = useRef<THREE.Vector2>(new THREE.Vector2(0, 0))
+  const timeRef = useRef<number>(0)
+  const [webGLSupported, setWebGLSupported] = useState<boolean>(true)
 
   // Check WebGL support
   useEffect(() => {
-    const canvas = document.createElement('canvas');
-    const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+    const canvas = document.createElement("canvas")
+    const gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl")
     if (!gl) {
-      setWebGLSupported(false);
-      console.warn('WebGL is not supported in this browser');
+      setWebGLSupported(false)
+      console.warn("WebGL is not supported in this browser")
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    if (!containerRef.current || !webGLSupported) return;
+    if (!containerRef.current || !webGLSupported) return
 
-    const container = containerRef.current;
-    const width = container.clientWidth;
-    const height = container.clientHeight;
+    const container = containerRef.current
+    const width = container.clientWidth
+    const height = container.clientHeight
 
     // Scene setup
-    const scene = new THREE.Scene();
-    sceneRef.current = scene;
-    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    cameraRef.current = camera;
+    const scene = new THREE.Scene()
+    sceneRef.current = scene
+    const camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1)
+    cameraRef.current = camera
 
-    let renderer: THREE.WebGLRenderer;
+    let renderer: THREE.WebGLRenderer
     try {
       renderer = new THREE.WebGLRenderer({
         antialias: false,
         alpha: true,
-        powerPreference: 'high-performance',
-        precision: 'lowp',
+        powerPreference: "high-performance",
+        precision: "lowp",
         stencil: false,
-        depth: false
-      });
+        depth: false,
+      })
     } catch (error) {
-      console.error('Failed to create WebGL renderer:', error);
-      setWebGLSupported(false);
-      return;
+      console.error("Failed to create WebGL renderer:", error)
+      setWebGLSupported(false)
+      return
     }
 
-    renderer.setSize(width, height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    container.appendChild(renderer.domElement);
-    rendererRef.current = renderer;
+    renderer.setSize(width, height)
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+    container.appendChild(renderer.domElement)
+    rendererRef.current = renderer
 
     // Convert hex colors to RGB
     const parseColor = (hex: string): THREE.Vector3 => {
-      const color = new THREE.Color(hex);
-      return new THREE.Vector3(color.r, color.g, color.b);
-    };
+      const color = new THREE.Color(hex)
+      return new THREE.Vector3(color.r, color.g, color.b)
+    }
 
     // Shader material
     const vertexShader = `
@@ -100,7 +101,7 @@ const LightPillar: React.FC<LightPillarProps> = ({
         vUv = uv;
         gl_Position = vec4(position, 1.0);
       }
-    `;
+    `
 
     const fragmentShader = `
       uniform float uTime;
@@ -219,7 +220,7 @@ const LightPillar: React.FC<LightPillarProps> = ({
         
         gl_FragColor = vec4(color * uIntensity, 1.0);
       }
-    `;
+    `
 
     const material = new THREE.ShaderMaterial({
       vertexShader,
@@ -236,109 +237,109 @@ const LightPillar: React.FC<LightPillarProps> = ({
         uPillarWidth: { value: pillarWidth },
         uPillarHeight: { value: pillarHeight },
         uNoiseIntensity: { value: noiseIntensity },
-        uPillarRotation: { value: pillarRotation }
+        uPillarRotation: { value: pillarRotation },
       },
       transparent: true,
       depthWrite: false,
-      depthTest: false
-    });
-    materialRef.current = material;
+      depthTest: false,
+    })
+    materialRef.current = material
 
-    const geometry = new THREE.PlaneGeometry(2, 2);
-    geometryRef.current = geometry;
-    const mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
+    const geometry = new THREE.PlaneGeometry(2, 2)
+    geometryRef.current = geometry
+    const mesh = new THREE.Mesh(geometry, material)
+    scene.add(mesh)
 
     // Mouse interaction - throttled for performance
-    let mouseMoveTimeout: number | null = null;
+    let mouseMoveTimeout: number | null = null
     const handleMouseMove = (event: MouseEvent) => {
-      if (!interactive) return;
+      if (!interactive) return
 
-      if (mouseMoveTimeout) return;
+      if (mouseMoveTimeout) return
 
       mouseMoveTimeout = window.setTimeout(() => {
-        mouseMoveTimeout = null;
-      }, 16); // ~60fps throttle
+        mouseMoveTimeout = null
+      }, 16) // ~60fps throttle
 
-      const rect = container.getBoundingClientRect();
-      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-      mouseRef.current.set(x, y);
-    };
+      const rect = container.getBoundingClientRect()
+      const x = ((event.clientX - rect.left) / rect.width) * 2 - 1
+      const y = -((event.clientY - rect.top) / rect.height) * 2 + 1
+      mouseRef.current.set(x, y)
+    }
 
     if (interactive) {
-      container.addEventListener('mousemove', handleMouseMove, { passive: true });
+      container.addEventListener("mousemove", handleMouseMove, { passive: true })
     }
 
     // Animation loop with fixed timestep
-    let lastTime = performance.now();
-    const targetFPS = 60;
-    const frameTime = 1000 / targetFPS;
+    let lastTime = performance.now()
+    const targetFPS = 60
+    const frameTime = 1000 / targetFPS
 
     const animate = (currentTime: number) => {
-      if (!materialRef.current || !rendererRef.current || !sceneRef.current || !cameraRef.current) return;
+      if (!materialRef.current || !rendererRef.current || !sceneRef.current || !cameraRef.current) return
 
-      const deltaTime = currentTime - lastTime;
+      const deltaTime = currentTime - lastTime
 
       if (deltaTime >= frameTime) {
-        timeRef.current += 0.016 * rotationSpeed;
-        materialRef.current.uniforms.uTime.value = timeRef.current;
-        rendererRef.current.render(sceneRef.current, cameraRef.current);
-        lastTime = currentTime - (deltaTime % frameTime);
+        timeRef.current += 0.016 * rotationSpeed
+        materialRef.current.uniforms.uTime.value = timeRef.current
+        rendererRef.current.render(sceneRef.current, cameraRef.current)
+        lastTime = currentTime - (deltaTime % frameTime)
       }
 
-      rafRef.current = requestAnimationFrame(animate);
-    };
-    rafRef.current = requestAnimationFrame(animate);
+      rafRef.current = requestAnimationFrame(animate)
+    }
+    rafRef.current = requestAnimationFrame(animate)
 
     // Handle resize with debouncing
-    let resizeTimeout: number | null = null;
+    let resizeTimeout: number | null = null
     const handleResize = () => {
       if (resizeTimeout) {
-        clearTimeout(resizeTimeout);
+        clearTimeout(resizeTimeout)
       }
 
       resizeTimeout = window.setTimeout(() => {
-        if (!rendererRef.current || !materialRef.current || !containerRef.current) return;
-        const newWidth = containerRef.current.clientWidth;
-        const newHeight = containerRef.current.clientHeight;
-        rendererRef.current.setSize(newWidth, newHeight);
-        materialRef.current.uniforms.uResolution.value.set(newWidth, newHeight);
-      }, 150);
-    };
+        if (!rendererRef.current || !materialRef.current || !containerRef.current) return
+        const newWidth = containerRef.current.clientWidth
+        const newHeight = containerRef.current.clientHeight
+        rendererRef.current.setSize(newWidth, newHeight)
+        materialRef.current.uniforms.uResolution.value.set(newWidth, newHeight)
+      }, 150)
+    }
 
-    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener("resize", handleResize, { passive: true })
 
     // Cleanup
     return () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize)
       if (interactive) {
-        container.removeEventListener('mousemove', handleMouseMove);
+        container.removeEventListener("mousemove", handleMouseMove)
       }
       if (rafRef.current) {
-        cancelAnimationFrame(rafRef.current);
+        cancelAnimationFrame(rafRef.current)
       }
       if (rendererRef.current) {
-        rendererRef.current.dispose();
-        rendererRef.current.forceContextLoss();
+        rendererRef.current.dispose()
+        rendererRef.current.forceContextLoss()
         if (container.contains(rendererRef.current.domElement)) {
-          container.removeChild(rendererRef.current.domElement);
+          container.removeChild(rendererRef.current.domElement)
         }
       }
       if (materialRef.current) {
-        materialRef.current.dispose();
+        materialRef.current.dispose()
       }
       if (geometryRef.current) {
-        geometryRef.current.dispose();
+        geometryRef.current.dispose()
       }
 
-      rendererRef.current = null;
-      materialRef.current = null;
-      sceneRef.current = null;
-      cameraRef.current = null;
-      geometryRef.current = null;
-      rafRef.current = null;
-    };
+      rendererRef.current = null
+      materialRef.current = null
+      sceneRef.current = null
+      cameraRef.current = null
+      geometryRef.current = null
+      rafRef.current = null
+    }
   }, [
     topColor,
     bottomColor,
@@ -350,8 +351,8 @@ const LightPillar: React.FC<LightPillarProps> = ({
     pillarHeight,
     noiseIntensity,
     pillarRotation,
-    webGLSupported
-  ]);
+    webGLSupported,
+  ])
 
   if (!webGLSupported) {
     return (
@@ -361,12 +362,13 @@ const LightPillar: React.FC<LightPillarProps> = ({
       >
         WebGL not supported
       </div>
-    );
+    )
   }
 
   return (
     <div ref={containerRef} className={`w-full h-full absolute top-0 left-0 ${className}`} style={{ mixBlendMode }} />
-  );
-};
+  )
+}
 
-export default LightPillar;
+export { LightPillar }
+export default LightPillar
