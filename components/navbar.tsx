@@ -23,11 +23,11 @@ export function Navbar({ user }: NavbarProps) {
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <div className="relative">
-            <Brain className="w-8 h-8 text-purple-500 group-hover:text-purple-400 transition-colors" />
+            {/*   Brain className="w-8 h-8 text-purple-500 group-hover:text-purple-400 transition-colors" /> */}
             <div className="absolute inset-0 blur-xl bg-purple-500/50 group-hover:bg-purple-400/50 transition-colors" />
           </div>
           <span className="text-xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">
-            NeuralChat
+            Neptune
           </span>
         </Link>
 

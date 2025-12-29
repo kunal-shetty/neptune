@@ -12,7 +12,7 @@ importers:
         specifier: latest
         version: 0.34.3(nodemailer@7.0.12)
       '@google/genai':
-        specifier: 1.34.0
+        specifier: ^1.34.0
         version: 1.34.0(@modelcontextprotocol/sdk@1.25.1(hono@4.11.3)(zod@3.25.76))
       '@hookform/resolvers':
         specifier: ^3.10.0

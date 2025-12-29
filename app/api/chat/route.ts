@@ -1,38 +1,71 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { GoogleGenAI } from "@google/genai"
+import { NextResponse } from "next/server"
 
-const SYSTEM_PROMPTS = {
-  default: "You are a helpful AI assistant. Provide clear, concise, and accurate responses.",
+const apiKey = process.env.GEMINI_API_KEY || ""
+const ai = new GoogleGenAI({ apiKey })
+
+type UIMessage = {
+  role: "user" | "assistant"
+  content: string
+}
+
+const MODE_PROMPTS: Record<string, string> = {
+  default: "You are a helpful, friendly, and intelligent AI assistant.",
   developer:
-    "You are a Senior Software Developer with 15+ years of experience. Provide expert-level technical advice, code reviews, and architectural guidance. Be precise and thorough.",
-  eli5: "You are an expert at explaining complex topics in simple terms that a 5-year-old could understand. Use analogies, simple language, and avoid jargon.",
+    "You are a senior software engineer. Give clear, practical, and professional technical explanations with best practices.",
+  eli5:
+    "Explain everything in very simple language, as if talking to a 5-year-old. Avoid jargon.",
   roast:
-    "You are a witty, playful AI with a great sense of humor. Provide funny, lighthearted roasts and jokes. Keep it fun and never offensive or mean-spirited.",
+    "Be playful, sarcastic, and witty, but not abusive or hateful. Keep it light-hearted.",
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   try {
-    const { messages, mode = "default" } = await req.json()
+    if (!apiKey) {
+      return NextResponse.json(
+        { error: "Gemini API key missing" },
+        { status: 500 }
+      )
+    }
 
-    const systemPrompt = SYSTEM_PROMPTS[mode as keyof typeof SYSTEM_PROMPTS] || SYSTEM_PROMPTS.default
+    const {
+      messages,
+      mode,
+    }: { messages: UIMessage[]; mode: keyof typeof MODE_PROMPTS } =
+      await req.json()
 
-    // TODO: Replace with actual AI API call (OpenAI, Anthropic, etc.)
-    // For now, return a mock response
-    const mockResponse = generateMockResponse(messages[messages.length - 1].content, mode)
+    const systemPrompt =
+      MODE_PROMPTS[mode] || MODE_PROMPTS.default
 
-    return NextResponse.json({ message: mockResponse })
+    const contents = [
+      {
+        role: "user",
+        parts: [{ text: systemPrompt }],
+      },
+      ...messages.map((m) => ({
+        role: m.role === "assistant" ? "model" : "user",
+        parts: [{ text: m.content }],
+      })),
+    ]
+
+    const result = await ai.models.generateContent({
+      model: "gemini-2.5-flash",
+      contents,
+      config: {
+        temperature: 0.7,
+      },
+    })
+
+    const text =
+      result.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "I couldn’t generate a response. Please try again."
+
+    return NextResponse.json({ message: text })
   } catch (error) {
-    console.error("[v0] API error:", error)
-    return NextResponse.json({ error: "Failed to process request" }, { status: 500 })
+    console.error("[Gemini Chat Error]", error)
+    return NextResponse.json(
+      { error: "Failed to generate chat response" },
+      { status: 500 }
+    )
   }
-}
-
-function generateMockResponse(userMessage: string, mode: string): string {
-  const responses: Record<string, string> = {
-    default: `I received your message: "${userMessage}". This is a mock response. To enable real AI responses, please add your AI API key (OpenAI, Anthropic, etc.) to the environment variables and update the /app/api/chat/route.ts file.`,
-    developer: `As a senior developer, I'd approach "${userMessage}" by first analyzing the requirements, considering scalability and maintainability. This is a mock response - integrate your preferred AI API to get real technical guidance.`,
-    eli5: `Imagine "${userMessage}" is like... well, this is a mock response! To get real simple explanations, add your AI API key and update the chat route.`,
-    roast: `Oh, you want to talk about "${userMessage}"? That's adorable! 😄 This is a mock response though - set up your AI API to get actual witty roasts!`,
-  }
-
-  return responses[mode] || responses.default
 }
