@@ -4,12 +4,12 @@ import Link from "next/link"
 import { GridScan } from "@/components/reactbits/grid-scan"
 import { LightPillar } from "@/components/reactbits/light-pillar"
 import { GlassCard } from "@/components/reactbits/glass-card"
-import { Button } from "@/components/ui/button"
 import { Sparkles, Brain, Rocket } from "lucide-react"
 import SplashCursor from "@/components/reactbits/splash-cursor"
 import { ScrollSection } from "@/components/reactbits/scroll-section"
-import { NeptuneFooter } from "@/components/neptune-hero"
 import { MagneticButton } from "@/components/magnetic-button"
+import { NeptuneModelSection } from "@/components/reactbits/3d-model"
+import LightRays from "@/components/reactbits/light-rays"
 
 export default function Home() {
   return (
@@ -34,14 +34,7 @@ export default function Home() {
           />
           <div className="container relative z-10 mx-auto px-4 text-center">
             <div className="max-w-6xl mx-auto space-y-8 sm:space-y-10">
-              {/* Badge */}
-              <div className="inline-flex items-center gap-2 px-4 sm:px-6 py-2 sm:py-3 rounded-full bg-purple-500/10 border border-purple-500/30 backdrop-blur-md">
-                <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-purple-400" />
-                <span className="text-xs sm:text-sm md:text-base font-medium text-purple-300">
-                  Powered by Google Gemini
-                </span>
-              </div>
-
+              
               {/* Heading */}
               <h1
                 className="
@@ -88,51 +81,23 @@ export default function Home() {
 
               {/* CTAs */}
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-6 sm:pt-8">
-                <Button
-                  asChild
-                  size="lg"
-                  className="
-                    group
-                    bg-gradient-to-r from-purple-600 via-fuchsia-600 to-blue-600
-                    hover:from-purple-700 hover:via-fuchsia-700 hover:to-blue-700
-                    text-white
-                    text-base sm:text-lg
-                    font-semibold
-                    px-6 sm:px-10 md:px-12
-                    py-4 sm:py-6 md:py-8
-                    rounded-full
-                    shadow-2xl shadow-purple-500/30
-                    transition-all hover:scale-105
-                  "
-                >
-                  <Link href="/">
-                    <Rocket className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 group-hover:rotate-12 transition-transform" />
-                    Talk to Neptune
+                {/* PRIMARY CTA */}
+                <MagneticButton size="large" variant="primary">
+                  <Link href="/" className="flex items-center gap-3">
+                    <Rocket className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <span>Talk to Neptune</span>
                   </Link>
-                </Button>
+                </MagneticButton>
 
-                <Button
-                  asChild
-                  size="lg"
-                  variant="outline"
-                  className="
-                    border-2 border-white/20 hover:border-white/40 hover:bg-white/5
-                    text-white
-                    text-base sm:text-lg
-                    font-semibold
-                    px-6 sm:px-10 md:px-12
-                    py-4 sm:py-6 md:py-8
-                    rounded-full
-                    backdrop-blur-md
-                    transition-all hover:scale-105
-                  "
-                >
-                  <Link href="#features">
-                    <Brain className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3" />
-                    What Neptune Can Do
+                {/* SECONDARY CTA */}
+                <MagneticButton size="large" variant="secondary">
+                  <Link href="#features" className="flex items-center gap-3">
+                    <Brain className="w-5 h-5 sm:w-6 sm:h-6" />
+                    <span>What Neptune Can Do</span>
                   </Link>
-                </Button>
+                </MagneticButton>
               </div>
+
 
               {/* Accent */}
               <div className="relative -mb-24 sm:-mb-32 mt-12 sm:mt-16">
@@ -184,13 +149,31 @@ export default function Home() {
             <ScrollSection />
           </div>
         </section>
+        <NeptuneModelSection />
         {/* CTA */}
+
         <section className="relative py-20 sm:py-32 overflow-hidden">
-          <div className="absolute inset-0 z-0 opacity-30">
-            <GridScan />
+          {/* LIGHT RAYS */}
+          <div className="absolute inset-0 z-[1] pointer-events-none">
+            <LightRays
+              raysOrigin="bottom-center"
+              raysColor="#8b5cf6"
+              raysSpeed={0.8}
+              lightSpread={1.6}
+              rayLength={2.0}
+              fadeDistance={1.2}
+              saturation={1.3}
+              pulsating
+              followMouse
+              mouseInfluence={0.08}
+              noiseAmount={0.05}
+              distortion={0.15}
+              className="opacity-70"
+            />
           </div>
 
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-purple-950/10 to-background" />
+          {/* GRADIENT WASH (keeps contrast readable) */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-purple-950/20 to-background" />
 
           <div className="container relative z-10 mx-auto px-4">
             <GlassCard className="max-w-5xl mx-auto p-8 sm:p-16 text-center">
@@ -199,13 +182,16 @@ export default function Home() {
                   Ready to Talk to Neptune?
                 </span>
               </h2>
+
               <p className="text-base sm:text-lg md:text-xl text-gray-400 mb-8 sm:mb-12 max-w-3xl mx-auto font-light leading-relaxed">
                 Discover a deeper, smarter, and more human AI experience —
                 powered by Neptune.
               </p>
+
               <MagneticButton variant="primary" size="large">
-                <Link href="/">
-                  Start with Neptune
+                <Link href="/" className="flex items-center gap-3">
+                  <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
+                  <span>Start with Neptune</span>
                 </Link>
               </MagneticButton>
             </GlassCard>
