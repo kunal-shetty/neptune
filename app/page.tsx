@@ -149,7 +149,6 @@ export default function Home() {
             <ScrollSection />
           </div>
         </section>
-        <NeptuneModelSection />
         {/* CTA */}
 
         <section className="relative py-20 sm:py-32 overflow-hidden">
