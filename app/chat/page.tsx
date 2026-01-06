@@ -30,7 +30,6 @@ export default function ChatPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false)
   const router = useRouter()
 
-
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -40,7 +39,7 @@ export default function ChatPage() {
     if (stored) setMessages(JSON.parse(stored))
   }, [])
 
-  /* Persist to localStorage */
+  /* Persist to localStorage + autoscroll */
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(messages))
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
@@ -149,8 +148,14 @@ export default function ChatPage() {
         </div>
 
         <div className="flex-1 p-4 space-y-4">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg
-            bg-purple-500/10 text-purple-400 border border-purple-500/20">
+          <button
+            className="
+              w-full flex items-center gap-3 px-4 py-3
+              text-sm font-medium rounded-lg
+              bg-purple-500/10 text-purple-400
+              border border-purple-500/20
+            "
+          >
             <MessageSquare className="h-4 w-4" />
             Chat
           </button>
@@ -168,9 +173,17 @@ export default function ChatPage() {
       {/* MAIN */}
       <main className="flex-1 flex flex-col min-h-0">
 
-        {/* HEADER */}
-        <header className="h-16 border-b border-white/10 bg-background/70 backdrop-blur-sm
-          flex items-center justify-between px-4 md:px-8">
+        {/* HEADER — STICKY */}
+        <header
+          className="
+            sticky top-0 z-30
+            h-16
+            border-b border-white/10
+            bg-background/80 backdrop-blur-sm
+            flex items-center justify-between
+            px-4 md:px-8
+          "
+        >
           <div className="flex items-center gap-3">
             <button
               onClick={() => setIsSidebarOpen(true)}
@@ -178,22 +191,24 @@ export default function ChatPage() {
             >
               <Menu className="h-5 w-5" />
             </button>
+
             <span className="text-sm text-purple-400/60">
-              Chat with Neptune            </span>
+              Chat with Neptune
+            </span>
           </div>
 
           <button
-  className="p-2 text-zinc-500 hover:text-red-500"
-  onClick={() => router.push("/notfound")}
->
-  <Power className="h-4 w-4" />
-</button>
+            className="p-2 text-zinc-500 hover:text-red-500"
+            onClick={() => router.push("/notfound")}
+          >
+            <Power className="h-4 w-4" />
+          </button>
         </header>
 
-        {/* CHAT */}
+        {/* CHAT BODY */}
         <div className="flex-1 flex flex-col min-h-0 bg-background/40">
 
-          {/* MESSAGES */}
+          {/* MESSAGES — ONLY SCROLLABLE AREA */}
           <div className="flex-1 overflow-y-auto px-6 md:px-10 py-8 space-y-6">
             {!messages.length && !isLoading && (
               <div className="h-full flex items-center justify-center opacity-50">
@@ -214,7 +229,8 @@ export default function ChatPage() {
                 <div
                   className={`
                     max-w-[80%] md:max-w-[65%]
-                    rounded-3xl px-5 py-4 text-[15px] leading-relaxed
+                    rounded-3xl px-5 py-4
+                    text-[15px] leading-relaxed
                     ${m.role === "user"
                       ? "bg-gradient-to-br from-purple-600 via-fuchsia-600 to-blue-600 text-white"
                       : "bg-white/5 backdrop-blur-md text-gray-200"}
@@ -236,7 +252,7 @@ export default function ChatPage() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* INPUT */}
+          {/* INPUT — FIXED BOTTOM */}
           <div className="border-t border-white/10 p-4 md:p-6 bg-background/70 backdrop-blur-xl">
             <div className="max-w-4xl mx-auto flex items-end gap-3">
               <Input
@@ -246,14 +262,20 @@ export default function ChatPage() {
                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 placeholder="Message Neptune…"
                 disabled={isLoading}
-                className="flex-1 min-h-[52px] rounded-2xl bg-white/5 border-white/10 px-5 text-[15px]"
+                className="
+                  flex-1 min-h-[52px]
+                  rounded-2xl bg-white/5
+                  border-white/10 px-5 text-[15px]
+                "
               />
 
               <Button
                 onClick={sendMessage}
                 disabled={!input.trim() || isLoading}
-                className="h-12 px-6 rounded-xl
-                  bg-gradient-to-r from-purple-600 via-fuchsia-600 to-blue-600"
+                className="
+                  h-12 px-6 rounded-xl
+                  bg-gradient-to-r from-purple-600 via-fuchsia-600 to-blue-600
+                "
               >
                 {isLoading ? <Loader2 className="animate-spin" /> : <Send />}
               </Button>
