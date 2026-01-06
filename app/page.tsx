@@ -83,7 +83,7 @@ export default function Home() {
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 pt-6 sm:pt-8">
                 {/* PRIMARY CTA */}
                 <MagneticButton size="large" variant="primary">
-                  <Link href="/" className="flex items-center gap-3">
+                  <Link href="/chat" className="flex items-center gap-3">
                     <Rocket className="w-5 h-5 sm:w-6 sm:h-6" />
                     <span>Talk to Neptune</span>
                   </Link>
@@ -188,7 +188,7 @@ export default function Home() {
               </p>
 
               <MagneticButton variant="primary" size="large">
-                <Link href="/" className="flex items-center gap-3">
+                <Link href="/chat" className="flex items-center gap-3">
                   <Sparkles className="w-5 h-5 sm:w-6 sm:h-6" />
                   <span>Start with Neptune</span>
                 </Link>
